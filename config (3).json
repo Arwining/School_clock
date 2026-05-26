@@ -1,0 +1,87 @@
+{
+  "message": "nooooo",
+  "messageEnabled": true,
+  "messageEnd": 1779843742966,
+  "forceTheme": "",
+  "background": "",
+  "schedule": [
+    {
+      "name": "PC",
+      "start": "08:31",
+      "end": "08:46",
+      "type": "period"
+    },
+    {
+      "name": "Transition",
+      "start": "08:46",
+      "end": "08:48",
+      "type": "transition"
+    },
+    {
+      "name": "Period 1",
+      "start": "08:48",
+      "end": "09:48",
+      "type": "period"
+    },
+    {
+      "name": "Transition",
+      "start": "09:48",
+      "end": "09:50",
+      "type": "transition"
+    },
+    {
+      "name": "Period 2",
+      "start": "09:50",
+      "end": "10:50",
+      "type": "period"
+    },
+    {
+      "name": "First Break",
+      "start": "10:50",
+      "end": "11:30",
+      "type": "period"
+    },
+    {
+      "name": "Transition",
+      "start": "11:30",
+      "end": "11:32",
+      "type": "transition"
+    },
+    {
+      "name": "Period 3",
+      "start": "11:32",
+      "end": "12:32",
+      "type": "period"
+    },
+    {
+      "name": "Transition",
+      "start": "12:32",
+      "end": "12:34",
+      "type": "transition"
+    },
+    {
+      "name": "Period 4",
+      "start": "12:34",
+      "end": "13:34",
+      "type": "period"
+    },
+    {
+      "name": "Recess",
+      "start": "13:34",
+      "end": "13:54",
+      "type": "period"
+    },
+    {
+      "name": "Transition",
+      "start": "13:54",
+      "end": "13:56",
+      "type": "transition"
+    },
+    {
+      "name": "Period 5",
+      "start": "13:56",
+      "end": "14:56",
+      "type": "period"
+    }
+  ]
+}
