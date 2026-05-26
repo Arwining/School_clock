@@ -1,0 +1,16 @@
+{
+  "message":"Welcome to School Clock",
+  "theme":"dark",
+  "schedule":[
+    {
+      "name":"Period 1",
+      "start":"08:40",
+      "end":"09:40"
+    },
+    {
+      "name":"Period 2",
+      "start":"09:45",
+      "end":"10:45"
+    }
+  ]
+}

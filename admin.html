@@ -1,0 +1,132 @@
+<!doctype html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>School Clock Admin</title>
+
+<style>
+
+body{
+font-family:Arial;
+background:#0f172a;
+color:#fff;
+padding:30px
+}
+
+input,select,textarea{
+width:100%;
+padding:12px;
+margin:10px 0;
+border:none;
+border-radius:12px
+}
+
+button{
+padding:14px 18px;
+border:none;
+border-radius:14px;
+background:#7cffb2;
+font-weight:700;
+cursor:pointer
+}
+
+.row{
+display:grid;
+grid-template-columns:1fr 120px 120px;
+gap:10px;
+margin-bottom:10px
+}
+
+</style>
+</head>
+<body>
+
+<h1>School Clock Admin</h1>
+
+<input id="message" placeholder="Broadcast Message">
+
+<select id="theme">
+<option value="dark">Dark</option>
+<option value="light">Light</option>
+</select>
+
+<div id="rows"></div>
+
+<button onclick="addPeriod()">
+Add Period
+</button>
+
+<button onclick="generate()">
+Generate Config
+</button>
+
+<textarea id="output"></textarea>
+
+<script>
+
+const rows=document.getElementById("rows")
+
+let schedule=[]
+
+function addPeriod(){
+
+schedule.push({
+name:"Period",
+start:"08:00",
+end:"09:00"
+})
+
+render()
+
+}
+
+function render(){
+
+rows.innerHTML=schedule.map((p,i)=>`
+
+<div class="row">
+
+<input value="${p.name}" id="n${i}">
+
+<input type="time" value="${p.start}" id="s${i}">
+
+<input type="time" value="${p.end}" id="e${i}">
+
+</div>
+
+`).join("")
+
+}
+
+function generate(){
+
+schedule=schedule.map((p,i)=>({
+
+name:document.getElementById("n"+i).value,
+
+start:document.getElementById("s"+i).value,
+
+end:document.getElementById("e"+i).value
+
+}))
+
+document.getElementById("output").value=
+JSON.stringify({
+
+message:
+document.getElementById("message").value,
+
+theme:
+document.getElementById("theme").value,
+
+schedule
+
+},null,2)
+
+}
+
+addPeriod()
+
+</script>
+</body>
+</html>

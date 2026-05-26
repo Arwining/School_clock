@@ -1,0 +1,309 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Clock</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif
+}
+
+body{
+background:#0f172a;
+color:#fff;
+overflow:hidden;
+transition:.3s
+}
+
+#app{
+width:100vw;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:3vw
+}
+
+#panel{
+width:min(900px,95vw);
+background:#ffffff10;
+border:1px solid #ffffff18;
+backdrop-filter:blur(20px);
+border-radius:28px;
+padding:32px;
+box-shadow:0 10px 40px #0005
+}
+
+#clock{
+font-size:clamp(2rem,8vw,7rem);
+font-weight:900;
+text-align:center;
+margin-bottom:20px
+}
+
+#message{
+display:none;
+padding:18px;
+border-radius:18px;
+background:#ffcc0015;
+border:1px solid #ffcc0055;
+margin-bottom:20px;
+text-align:center;
+font-weight:800;
+font-size:1.2rem;
+animation:flash 1s infinite
+}
+
+@keyframes flash{
+0%{opacity:1}
+50%{opacity:.4}
+100%{opacity:1}
+}
+
+#current{
+text-align:center;
+font-size:clamp(1.5rem,4vw,3rem);
+font-weight:900;
+color:#7cffb2;
+margin-bottom:15px
+}
+
+#countdown{
+text-align:center;
+font-size:clamp(2rem,6vw,5rem);
+font-weight:900;
+margin-bottom:20px
+}
+
+#progress{
+width:100%;
+height:16px;
+background:#ffffff10;
+border-radius:999px;
+overflow:hidden;
+margin-bottom:25px
+}
+
+#bar{
+width:0%;
+height:100%;
+background:linear-gradient(90deg,#7cffb2,#43e97b)
+}
+
+#list{
+display:flex;
+flex-direction:column;
+gap:8px;
+max-height:40vh;
+overflow:auto
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+padding:12px 16px;
+border-radius:14px;
+background:#ffffff08
+}
+
+.active{
+background:#7cffb220;
+color:#7cffb2;
+font-weight:700
+}
+
+</style>
+</head>
+<body>
+
+<div id="app">
+
+<div id="panel">
+
+<div id="clock"></div>
+
+<div id="message"></div>
+
+<div id="current"></div>
+
+<div id="countdown"></div>
+
+<div id="progress">
+<div id="bar"></div>
+</div>
+
+<div id="list"></div>
+
+</div>
+
+</div>
+
+<script>
+
+const CONFIG_URL=
+"https://arwining.github.io/School_clock/config.json"
+
+const q=i=>document.getElementById(i)
+
+const clock=q("clock")
+const current=q("current")
+const countdown=q("countdown")
+const message=q("message")
+const list=q("list")
+const bar=q("bar")
+
+let config={schedule:[]}
+
+function td(v){
+
+let[h,m]=v.split(":").map(Number)
+
+let d=new Date()
+
+d.setHours(h,m,0,0)
+
+return d
+
+}
+
+function fm(ms){
+
+let x=Math.max(0,(ms/1000)|0)
+
+let h=(x/3600)|0
+let m=((x%3600)/60)|0
+let s=x%60
+
+return[h,m,s]
+.map(v=>String(v).padStart(2,"0"))
+.join(":")
+
+}
+
+async function loadRemote(){
+
+try{
+
+let r=await fetch(
+CONFIG_URL+"?t="+Date.now()
+)
+
+config=await r.json()
+
+applyConfig()
+
+render()
+
+}catch(err){
+
+console.log(err)
+
+}
+
+}
+
+function applyConfig(){
+
+document.body.style.background=
+config.theme=="light"
+?"#f3f4f6"
+:"#0f172a"
+
+document.body.style.color=
+config.theme=="light"
+?"#111"
+:"#fff"
+
+if(config.message){
+
+message.style.display="block"
+message.textContent=config.message
+
+}else{
+
+message.style.display="none"
+
+}
+
+}
+
+function render(){
+
+list.innerHTML=config.schedule.map((p,i)=>`
+
+<div class="item" id="i${i}">
+<span>${p.name}</span>
+<span>${p.start}-${p.end}</span>
+</div>
+
+`).join("")
+
+}
+
+function update(){
+
+clock.textContent=
+new Date().toLocaleTimeString()
+
+let now=new Date()
+
+let cur=null
+
+document.querySelectorAll(".item")
+.forEach(v=>v.classList.remove("active"))
+
+for(let i=0;i<config.schedule.length;i++){
+
+let p=config.schedule[i]
+
+let st=td(p.start)
+let en=td(p.end)
+
+if(now>=st&&now<en){
+
+cur={...p,st,en,i}
+
+}
+
+}
+
+if(cur){
+
+q("i"+cur.i)?.classList.add("active")
+
+current.textContent=cur.name
+
+let rem=cur.en-now
+
+countdown.textContent=fm(rem)
+
+bar.style.width=
+((now-cur.st)/(cur.en-cur.st)*100)+"%"
+
+}else{
+
+current.textContent="No Active Period"
+
+countdown.textContent="00:00:00"
+
+bar.style.width="0%"
+
+}
+
+}
+
+loadRemote()
+
+setInterval(loadRemote,5000)
+
+setInterval(update,1000)
+
+</script>
+</body>
+</html>
