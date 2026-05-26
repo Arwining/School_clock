@@ -1,0 +1,621 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Clock Admin</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif
+}
+
+body{
+background:#0f172a;
+color:white;
+padding:30px
+}
+
+.panel{
+background:#ffffff10;
+padding:24px;
+border-radius:24px;
+margin-bottom:20px;
+border:1px solid #ffffff12
+}
+
+h1,h2{
+margin-bottom:16px
+}
+
+input,
+textarea,
+select{
+width:100%;
+padding:12px;
+margin-top:10px;
+margin-bottom:14px;
+border:none;
+border-radius:12px
+}
+
+button{
+padding:14px 18px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-weight:700;
+margin:4px
+}
+
+.off{
+background:#ff6767;
+color:white
+}
+
+.on{
+background:#59ff95;
+color:black
+}
+
+.row{
+display:grid;
+grid-template-columns:
+1fr
+120px
+120px
+140px
+80px;
+gap:10px;
+margin-bottom:10px
+}
+
+.broadcastBox{
+background:#00000022;
+padding:18px;
+border-radius:18px;
+margin-top:10px
+}
+
+.small{
+opacity:.7;
+font-size:.9rem;
+margin-bottom:10px
+}
+
+@media(max-width:900px){
+
+.row{
+grid-template-columns:1fr
+}
+
+}
+
+</style>
+</head>
+<body>
+
+<script>
+
+const token=prompt(
+"Enter GitHub Token"
+)
+
+if(!token){
+
+document.body.innerHTML=
+"<h1 style='padding:40px'>Token Required</h1>"
+
+throw new Error()
+
+}
+
+</script>
+
+<h1>
+School Clock Admin
+</h1>
+
+<div class="panel">
+
+<h2>
+Broadcast System
+</h2>
+
+<div class="small">
+Send live messages to every clock
+</div>
+
+<div class="broadcastBox">
+
+<input
+id="message"
+placeholder="Broadcast message">
+
+<input
+id="minutes"
+type="number"
+value="60"
+placeholder="Minutes">
+
+<div>
+
+<button
+id="enableBroadcastBtn"
+class="off"
+onclick="enableBroadcast()">
+
+Broadcast OFF
+
+</button>
+
+<button
+onclick="disableBroadcast()">
+
+Disable Broadcast
+
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>
+Theme Controls
+</h2>
+
+<button
+id="darkBtn"
+class="off"
+onclick="setTheme('dark')">
+
+Force Dark
+
+</button>
+
+<button
+id="lightBtn"
+class="off"
+onclick="setTheme('light')">
+
+Force Light
+
+</button>
+
+<button
+onclick="clearTheme()">
+
+Clear Theme
+
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>
+Background Image
+</h2>
+
+<input
+id="background"
+placeholder="Image URL">
+
+<button
+onclick="setBackground()">
+
+Apply Background
+
+</button>
+
+<button
+onclick="clearBackground()">
+
+Clear Background
+
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>
+Remote Schedule
+</h2>
+
+<div class="small">
+Users must enable "Use Remote Schedule"
+</div>
+
+<div id="rows"></div>
+
+<div style="margin-top:14px">
+
+<button onclick="addPeriod()">
+Add Period
+</button>
+
+<button
+id="scheduleBtn"
+class="off"
+onclick="toggleRemoteSchedule()">
+
+Remote Schedule OFF
+
+</button>
+
+<button onclick="importSchedule()">
+Import Schedule
+</button>
+
+<button onclick="exportSchedule()">
+Export Schedule
+</button>
+
+</div>
+
+<input
+type="file"
+id="fileInput"
+accept=".json"
+hidden>
+
+</div>
+
+<script>
+
+const OWNER="Arwining"
+const REPO="School_clock"
+const PATH="config.json"
+
+let sha=""
+
+let data={
+
+message:"",
+messageEnabled:false,
+messageEnd:0,
+forceTheme:"",
+forceSchedule:false,
+background:"",
+schedule:[]
+
+}
+
+const rows=
+document.getElementById("rows")
+
+async function load(){
+
+let r=await fetch(
+`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`
+)
+
+let d=await r.json()
+
+sha=d.sha
+
+try{
+
+data=JSON.parse(atob(d.content))
+
+}catch{}
+
+render()
+
+}
+
+function render(){
+
+document.getElementById(
+"enableBroadcastBtn"
+).className=
+data.messageEnabled?"on":"off"
+
+document.getElementById(
+"enableBroadcastBtn"
+).textContent=
+data.messageEnabled
+?"Broadcast ON"
+:"Broadcast OFF"
+
+document.getElementById(
+"scheduleBtn"
+).className=
+data.forceSchedule?"on":"off"
+
+document.getElementById(
+"scheduleBtn"
+).textContent=
+data.forceSchedule
+?"Remote Schedule ON"
+:"Remote Schedule OFF"
+
+rows.innerHTML=
+data.schedule.map((p,i)=>`
+
+<div class="row">
+
+<input
+value="${p.name}"
+id="n${i}">
+
+<input
+type="time"
+value="${p.start}"
+id="s${i}">
+
+<input
+type="time"
+value="${p.end}"
+id="e${i}">
+
+<select id="t${i}">
+
+<option
+value="period"
+${p.type=="period"?"selected":""}>
+Period
+</option>
+
+<option
+value="transition"
+${p.type=="transition"?"selected":""}>
+Transition
+</option>
+
+</select>
+
+<button onclick="del(${i})">
+Delete
+</button>
+
+</div>
+
+`).join("")
+
+}
+
+function sync(){
+
+data.schedule=
+data.schedule.map((p,i)=>({
+
+name:
+document.getElementById("n"+i).value,
+
+start:
+document.getElementById("s"+i).value,
+
+end:
+document.getElementById("e"+i).value,
+
+type:
+document.getElementById("t"+i).value
+
+}))
+
+}
+
+async function save(){
+
+sync()
+
+let content=btoa(
+unescape(
+encodeURIComponent(
+JSON.stringify(data,null,2)
+)
+)
+)
+
+await fetch(
+
+`https://api.github.com/repos/${OWNER}/${REPO}/contents/${PATH}`,
+
+{
+
+method:"PUT",
+
+headers:{
+
+Authorization:`Bearer ${token}`,
+"Content-Type":"application/json"
+
+},
+
+body:JSON.stringify({
+
+message:"Update config",
+
+content,
+sha
+
+})
+
+}
+
+)
+
+load()
+
+}
+
+function enableBroadcast(){
+
+data.message=
+document.getElementById("message").value
+
+data.messageEnabled=true
+
+let mins=
+Number(
+document.getElementById("minutes").value
+)||60
+
+data.messageEnd=
+Date.now()+(mins*60000)
+
+save()
+
+}
+
+function disableBroadcast(){
+
+data.messageEnabled=false
+
+save()
+
+}
+
+function setTheme(v){
+
+data.forceTheme=v
+
+save()
+
+}
+
+function clearTheme(){
+
+data.forceTheme=""
+
+save()
+
+}
+
+function setBackground(){
+
+data.background=
+document.getElementById("background").value
+
+save()
+
+}
+
+function clearBackground(){
+
+data.background=""
+
+save()
+
+}
+
+function toggleRemoteSchedule(){
+
+data.forceSchedule=
+!data.forceSchedule
+
+save()
+
+}
+
+function addPeriod(){
+
+sync()
+
+data.schedule.push({
+
+name:"New Period",
+start:"08:00",
+end:"09:00",
+type:"period"
+
+})
+
+render()
+
+}
+
+function del(i){
+
+sync()
+
+data.schedule.splice(i,1)
+
+render()
+
+}
+
+function importSchedule(){
+
+document.getElementById(
+"fileInput"
+).click()
+
+}
+
+document.getElementById(
+"fileInput"
+).onchange=e=>{
+
+let f=e.target.files[0]
+
+if(!f)return
+
+let r=new FileReader()
+
+r.onload=v=>{
+
+try{
+
+let d=JSON.parse(v.target.result)
+
+data.schedule=
+d.schedule||d.periods||d
+
+render()
+
+save()
+
+}catch{
+
+alert("Invalid JSON")
+
+}
+
+}
+
+r.readAsText(f)
+
+}
+
+function exportSchedule(){
+
+sync()
+
+let b=new Blob(
+
+[JSON.stringify(
+{schedule:data.schedule},
+null,
+2
+)],
+
+{type:"application/json"}
+
+)
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(b)
+
+a.download="schedule.json"
+
+a.click()
+
+}
+
+load()
+
+</script>
+</body>
+</html>
