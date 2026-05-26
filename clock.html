@@ -1,0 +1,709 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Clock</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box
+}
+
+:root{
+--accent:#7cffb2;
+--bg1:#1e293b;
+--bg2:#0f172a;
+--panel:#ffffff14;
+--border:#ffffff1f;
+--text:#fff;
+--item:#ffffff08;
+--thin:#ffffff05
+}
+
+body.light{
+--accent:#0ea765;
+--bg1:#dfe9f3;
+--bg2:#fff;
+--panel:#ffffffea;
+--border:#00000012;
+--text:#111827;
+--item:#00000008;
+--thin:#00000004
+}
+
+body{
+font-family:Arial,sans-serif;
+background:radial-gradient(circle at top left,var(--bg1),var(--bg2) 65%);
+color:var(--text);
+overflow:hidden;
+transition:.3s
+}
+
+#broadcast{
+display:none;
+position:fixed;
+top:20px;
+left:50%;
+transform:translateX(-50%);
+z-index:9999;
+padding:16px 26px;
+border-radius:18px;
+background:#ffcc0018;
+border:1px solid #ffcc0055;
+color:#ffd166;
+font-weight:900;
+font-size:1.1rem;
+backdrop-filter:blur(18px);
+animation:flash 1s infinite
+}
+
+@keyframes flash{
+0%{opacity:1}
+50%{opacity:.45}
+100%{opacity:1}
+}
+
+#app{
+width:100vw;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:3vw;
+padding:3vw
+}
+
+#clockWrap{
+flex:1;
+display:flex;
+align-items:center;
+justify-content:center
+}
+
+#clock{
+font-size:clamp(2rem,7vw,8rem);
+font-weight:900;
+letter-spacing:4px
+}
+
+#miniClock{
+display:none;
+position:absolute;
+top:14px;
+left:50%;
+transform:translateX(-50%);
+font-size:1.2rem;
+font-weight:800;
+background:var(--panel);
+border:1px solid var(--border);
+padding:10px 18px;
+border-radius:999px;
+backdrop-filter:blur(12px)
+}
+
+#side{
+width:min(500px,42vw);
+min-width:320px;
+height:min(92vh,900px);
+display:flex;
+flex-direction:column;
+padding:28px;
+border-radius:28px;
+background:var(--panel);
+border:1px solid var(--border);
+backdrop-filter:blur(18px);
+box-shadow:0 10px 40px #0003;
+position:relative;
+overflow:hidden
+}
+
+#menuBtn{
+position:absolute;
+top:18px;
+right:18px;
+width:42px;
+height:42px;
+border:none;
+border-radius:50%;
+background:#0005;
+color:#fff;
+font-size:1.2rem;
+cursor:pointer;
+z-index:10
+}
+
+body.light #menuBtn{
+background:#fff;
+color:#000
+}
+
+#menu{
+position:absolute;
+top:70px;
+right:18px;
+width:240px;
+display:none;
+flex-direction:column;
+gap:8px;
+padding:10px;
+border-radius:18px;
+background:#0f172af5;
+border:1px solid #ffffff12;
+backdrop-filter:blur(18px);
+z-index:9
+}
+
+body.light #menu{
+background:#fffffff2;
+border:1px solid #00000012
+}
+
+#menu.show{
+display:flex
+}
+
+.menuButton{
+border:none;
+padding:12px;
+border-radius:12px;
+background:var(--item);
+color:var(--text);
+cursor:pointer;
+font-weight:700;
+text-align:left
+}
+
+.menuButton:hover{
+background:var(--accent);
+color:#000
+}
+
+#title,
+#next,
+#countdown{
+text-align:center
+}
+
+#title{
+opacity:.75;
+margin-bottom:8px
+}
+
+#next{
+color:var(--accent);
+font-size:clamp(1.2rem,2vw,2rem);
+font-weight:900;
+margin-bottom:12px
+}
+
+#countdown{
+font-size:clamp(2.2rem,5vw,5rem);
+font-weight:900;
+margin-bottom:14px
+}
+
+#progressWrap{
+width:100%;
+height:14px;
+border-radius:999px;
+overflow:hidden;
+background:var(--item);
+margin-bottom:22px
+}
+
+#progressBar{
+width:0%;
+height:100%;
+background:linear-gradient(90deg,#7cffb2,#43e97b);
+transition:width 1s linear
+}
+
+#list{
+flex:1;
+display:flex;
+flex-direction:column;
+gap:6px;
+overflow-y:auto;
+padding-right:4px
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+padding:11px 14px;
+border-radius:14px;
+background:var(--item);
+opacity:.75;
+flex-shrink:0
+}
+
+.thin{
+padding:4px 12px;
+font-size:.8rem;
+opacity:.45;
+background:var(--thin)
+}
+
+.active{
+background:#7cffb224;
+color:var(--accent);
+font-weight:700;
+opacity:1
+}
+
+@media(max-width:850px){
+
+#clockWrap{
+display:none
+}
+
+#miniClock{
+display:block
+}
+
+#app{
+justify-content:center;
+padding-top:80px
+}
+
+#side{
+width:min(95vw,700px)
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="broadcast"></div>
+
+<div id="miniClock"></div>
+
+<div id="app">
+
+<div id="clockWrap">
+<div id="clock"></div>
+</div>
+
+<div id="side">
+
+<button id="menuBtn">⚙</button>
+
+<div id="menu">
+
+<button class="menuButton" onclick="toggleTheme()">
+Toggle Light / Dark
+</button>
+
+<button class="menuButton" onclick="toggle24Hour()">
+Toggle 24 Hour Time
+</button>
+
+<button class="menuButton" onclick="importSchedule()">
+Import Schedule
+</button>
+
+<button class="menuButton" onclick="exportSchedule()">
+Export Schedule
+</button>
+
+</div>
+
+<div id="title">
+Current Period
+</div>
+
+<div id="next"></div>
+
+<div id="countdown"></div>
+
+<div id="progressWrap">
+<div id="progressBar"></div>
+</div>
+
+<div id="list"></div>
+
+</div>
+</div>
+
+<input type="file" id="fileInput" accept=".json" hidden>
+
+<script>
+
+const VERSION_URL=
+"https://arwining.github.io/School_clock/version.json"
+
+const CONFIG_URL=
+"https://arwining.github.io/School_clock/config.json"
+
+const LS="schoolClockLocal"
+const H="schoolClock24Hour"
+
+const q=i=>document.getElementById(i)
+
+const c=q("clock")
+const mc=q("miniClock")
+const t=q("title")
+const n=q("next")
+const cd=q("countdown")
+const pb=q("progressBar")
+const l=q("list")
+const m=q("menu")
+const b=q("broadcast")
+
+let s=[]
+let currentVersion="1"
+
+q("menuBtn").onclick=x=>{
+x.stopPropagation()
+m.classList.toggle("show")
+}
+
+document.onclick=()=>{
+m.classList.remove("show")
+}
+
+function toggleTheme(){
+document.body.classList.toggle("light")
+}
+
+function is24Hour(){
+return localStorage.getItem(H)=="1"
+}
+
+function toggle24Hour(){
+
+localStorage.setItem(
+H,
+is24Hour()?"0":"1"
+)
+
+render()
+
+}
+
+function formatClock(d){
+
+return d.toLocaleTimeString([],{
+hour:"2-digit",
+minute:"2-digit",
+second:"2-digit",
+hour12:!is24Hour()
+})
+
+}
+
+function fmtScheduleTime(v){
+
+if(is24Hour()) return v
+
+let[h,m]=v.split(":").map(Number)
+
+let ap=h>=12?"PM":"AM"
+
+h=h%12||12
+
+return `${h}:${String(m).padStart(2,"0")} ${ap}`
+
+}
+
+function td(v){
+
+let[a,b]=v.split(":").map(Number)
+
+let d=new Date()
+
+d.setHours(a,b,0,0)
+
+return d
+
+}
+
+function fm(ms){
+
+let x=Math.max(0,(ms/1000)|0)
+
+let h=(x/3600)|0
+let m=((x%3600)/60)|0
+let s=x%60
+
+return[h,m,s]
+.map(v=>String(v).padStart(2,"0"))
+.join(":")
+
+}
+
+function saveLocal(){
+
+localStorage.setItem(
+LS,
+JSON.stringify(s)
+)
+
+}
+
+function render(){
+
+l.innerHTML=s.map((p,i)=>`
+
+<div
+class="item ${p.type=="transition"?"thin":""}"
+id="i${i}"
+>
+
+<span>${p.name}</span>
+
+<span>${fmtScheduleTime(p.start)}-${fmtScheduleTime(p.end)}</span>
+
+</div>
+
+`).join("")
+
+}
+
+async function checkVersion(){
+
+try{
+
+let r=await fetch(
+VERSION_URL+"?t="+Date.now()
+)
+
+let v=await r.json()
+
+if(v.version!=currentVersion){
+
+currentVersion=v.version
+
+location.reload()
+
+}
+
+}catch(err){
+
+console.log(err)
+
+}
+
+}
+
+async function loadRemote(){
+
+try{
+
+let r=await fetch(
+CONFIG_URL+"?t="+Date.now()
+)
+
+let remote=await r.json()
+
+if(remote.schedule?.length){
+
+s=remote.schedule
+
+saveLocal()
+
+render()
+
+}
+
+if(remote.message){
+
+b.style.display="block"
+b.textContent=remote.message
+
+}else{
+
+b.style.display="none"
+
+}
+
+if(remote.forceTheme){
+
+if(remote.forceTheme=="light")
+document.body.classList.add("light")
+else
+document.body.classList.remove("light")
+
+}
+
+}catch(err){
+
+console.log(err)
+
+}
+
+}
+
+function loadLocal(){
+
+try{
+
+let d=JSON.parse(localStorage.getItem(LS))
+
+if(d?.length){
+
+s=d
+
+render()
+
+}
+
+}catch{}
+
+}
+
+function importSchedule(){
+
+q("fileInput").click()
+
+}
+
+q("fileInput").onchange=e=>{
+
+let f=e.target.files[0]
+
+if(!f)return
+
+let r=new FileReader()
+
+r.onload=v=>{
+
+try{
+
+let d=JSON.parse(v.target.result)
+
+s=d.periods||d.schedule||d
+
+saveLocal()
+
+render()
+
+alert("Imported")
+
+}catch{
+
+alert("Invalid JSON")
+
+}
+
+}
+
+r.readAsText(f)
+
+}
+
+function exportSchedule(){
+
+let b=new Blob(
+[JSON.stringify({schedule:s},null,2)],
+{type:"application/json"}
+)
+
+let a=document.createElement("a")
+
+a.href=URL.createObjectURL(b)
+
+a.download="schedule.json"
+
+a.click()
+
+}
+
+let last=-1
+
+function update(){
+
+let now=new Date()
+
+let time=formatClock(now)
+
+c.textContent=time
+mc.textContent=time
+
+let cur=null
+let nextP=null
+
+for(let i=0;i<s.length;i++){
+
+let p=s[i]
+
+let st=td(p.start)
+let en=td(p.end)
+
+if(now>=st&&now<en)
+cur={...p,st,en,i}
+
+if(!nextP&&st>now)
+nextP={...p,st}
+
+}
+
+if(last!=-1)
+q("i"+last)?.classList.remove("active")
+
+if(cur){
+
+last=cur.i
+
+q("i"+cur.i)?.classList.add("active")
+
+t.textContent=
+cur.type=="transition"
+?"Between Classes"
+:"Current: "+cur.name
+
+let rem=cur.en-now
+
+cd.textContent=fm(rem)
+
+pb.style.width=
+((now-cur.st)/(cur.en-cur.st)*100)
++"%"
+
+n.textContent=
+nextP
+?"Next: "+nextP.name
+:"🏠 Home Time"
+
+}else{
+
+last=-1
+
+t.textContent="Next Period"
+
+n.textContent=
+nextP
+?nextP.name
+:"School Finished"
+
+cd.textContent=
+nextP
+?fm(nextP.st-now)
+:"00:00:00"
+
+pb.style.width="0%"
+
+}
+
+}
+
+loadLocal()
+loadRemote()
+
+setInterval(loadRemote,5000)
+setInterval(checkVersion,10000)
+
+update()
+
+setInterval(update,1000)
+
+</script>
+</body>
+</html>
