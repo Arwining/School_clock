@@ -1,0 +1,31 @@
+{
+  "message":"Welcome to School Clock",
+  "theme":"dark",
+  "schedule":[
+    {
+      "name":"PC",
+      "start":"08:31",
+      "end":"08:46"
+    },
+    {
+      "name":"Period 1",
+      "start":"08:48",
+      "end":"09:48"
+    },
+    {
+      "name":"Period 2",
+      "start":"09:50",
+      "end":"10:50"
+    },
+    {
+      "name":"Break",
+      "start":"10:50",
+      "end":"11:30"
+    },
+    {
+      "name":"Period 3",
+      "start":"11:32",
+      "end":"12:32"
+    }
+  ]
+}
