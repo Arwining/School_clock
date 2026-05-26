@@ -1,0 +1,183 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Clock Admin</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Arial,sans-serif
+}
+
+body{
+background:#0f172a;
+color:white;
+padding:30px
+}
+
+.panel{
+background:#ffffff10;
+padding:24px;
+border-radius:24px;
+margin-bottom:20px;
+border:1px solid #ffffff12
+}
+
+input,
+select{
+width:100%;
+padding:12px;
+border:none;
+border-radius:12px;
+margin-top:10px
+}
+
+button{
+padding:14px 18px;
+border:none;
+border-radius:14px;
+cursor:pointer;
+font-weight:700
+}
+
+.on{
+background:#59ff95;
+color:black
+}
+
+.off{
+background:#ff6767;
+color:white
+}
+
+</style>
+</head>
+<body>
+
+<script>
+
+const PASSWORD="school123"
+
+const entered=prompt(
+"Enter Password"
+)
+
+if(entered!==PASSWORD){
+
+document.body.innerHTML=
+"<h1>Access Denied</h1>"
+
+throw new Error()
+
+}
+
+</script>
+
+<h1 style="margin-bottom:20px">
+School Clock Admin
+</h1>
+
+<div class="panel">
+
+<h2>Broadcast</h2>
+
+<input
+id="message"
+placeholder="Broadcast Message">
+
+<input
+id="minutes"
+type="number"
+value="5">
+
+<div style="
+display:flex;
+gap:10px;
+margin-top:14px;
+flex-wrap:wrap
+">
+
+<button
+class="on"
+onclick="broadcast()">
+
+Apply Broadcast
+
+</button>
+
+<button
+class="off"
+onclick="cancelBroadcast()">
+
+Cancel Broadcast
+
+</button>
+
+</div>
+
+</div>
+
+<div class="panel">
+
+<h2>Background Image</h2>
+
+<input
+id="background"
+placeholder="Image URL">
+
+<button
+class="on"
+style="margin-top:14px"
+onclick="setBackground()">
+
+Apply Background
+
+</button>
+
+</div>
+
+<div class="panel">
+
+<h2>Theme</h2>
+
+<div style="
+display:flex;
+gap:10px;
+flex-wrap:wrap
+">
+
+<button
+class="on"
+onclick="setTheme('light')">
+
+Force Light
+
+</button>
+
+<button
+class="off"
+onclick="setTheme('dark')">
+
+Force Dark
+
+</button>
+
+</div>
+
+</div>
+
+<script>
+
+alert(
+"THIS VERSION ONLY WORKS WHEN HOSTED ONLINE"
+)
+
+</script>
+
+</body>
+</html>
