@@ -1,0 +1,100 @@
+body.light{
+--accent:#2563eb;
+--bg1:#f4f7fb;
+--bg2:#dbeafe;
+--panel:#ffffffcc;
+--border:#00000018;
+--text:#111827;
+--item:#0000000d;
+--menu:#ffffffee;
+}
+
+.theme-sunset{
+--accent:#ffb347;
+background:
+linear-gradient(
+135deg,
+#ff6b6b,
+#feca57,
+#5f27cd
+);
+background-size:300% 300%;
+animation:sunsetMove 18s ease infinite;
+}
+
+@keyframes sunsetMove{
+0%{background-position:0% 50%}
+50%{background-position:100% 50%}
+100%{background-position:0% 50%}
+}
+
+.theme-moon{
+--accent:#bcd4ff;
+background:
+linear-gradient(
+180deg,
+#0f172a,
+#111827,
+#1e293b
+);
+}
+
+.theme-void{
+--accent:#b026ff;
+background:
+radial-gradient(
+circle at center,
+#1a0228,
+#05010a 70%
+);
+}
+
+.theme-hacker{
+--accent:#00ff88;
+background:black;
+color:#00ff88;
+}
+
+.theme-hacker::before{
+content:"";
+position:fixed;
+left:50%;
+top:50%;
+width:700px;
+height:700px;
+transform:translate(-50%,-50%);
+border-radius:50%;
+background:
+radial-gradient(
+circle,
+#000 0%,
+#000 18%,
+#00ff8844 24%,
+transparent 34%
+);
+animation:blackHoleSpin 18s linear infinite;
+z-index:-1;
+}
+
+@keyframes blackHoleSpin{
+from{
+transform:
+translate(-50%,-50%)
+rotate(0deg)
+}
+to{
+transform:
+translate(-50%,-50%)
+rotate(360deg)
+}
+}
+
+.theme-admin{
+--accent:#4db8ff;
+background:
+linear-gradient(
+135deg,
+#07111f,
+#02060d
+);
+}
