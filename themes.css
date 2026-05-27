@@ -1,0 +1,242 @@
+/* =========================
+BASE LIGHT
+========================= */
+
+body.light{
+--bg1:#dfe9f3;
+--bg2:#ffffff;
+--panel:#ffffffe8;
+--border:#00000012;
+--text:#111827;
+--item:#00000008;
+--menu:#fffffff2;
+--accent:#00b36b;
+}
+
+/* =========================
+GLOBAL FIXES
+========================= */
+
+body{
+position:relative;
+isolation:isolate;
+}
+
+#app{
+position:relative;
+z-index:2;
+}
+
+#clockWrap{
+position:relative;
+overflow:hidden;
+}
+
+#matrixCanvas{
+position:absolute;
+inset:0;
+width:100%;
+height:100%;
+pointer-events:none;
+z-index:0;
+opacity:.25;
+}
+
+#clock,
+#date{
+position:relative;
+z-index:2;
+}
+
+/* =========================
+SUNSET
+========================= */
+
+.theme-sunset{
+--bg1:#ff9966;
+--bg2:#2b1055;
+--accent:#ffd166;
+}
+
+/* =========================
+MOON
+========================= */
+
+.theme-moon{
+--bg1:#0f172a;
+--bg2:#1e293b;
+--accent:#93c5fd;
+}
+
+/* =========================
+VOID
+========================= */
+
+.theme-void{
+--bg1:#05010d;
+--bg2:#12051f;
+--accent:#b388ff;
+}
+
+.theme-void::before{
+
+content:"";
+
+position:fixed;
+
+left:50%;
+top:50%;
+
+width:min(60vw,600px);
+height:min(60vw,600px);
+
+transform:
+translate(-50%,-50%);
+
+border-radius:50%;
+
+background:
+radial-gradient(
+circle,
+#000 0%,
+#000 25%,
+#4b008255 40%,
+#7c3aed22 60%,
+transparent 75%
+);
+
+box-shadow:
+0 0 100px #7c3aed66,
+0 0 200px #4b008488;
+
+animation:
+blackhole 12s linear infinite;
+
+pointer-events:none;
+
+z-index:0;
+
+filter:blur(2px);
+
+opacity:.9;
+
+}
+
+@keyframes blackhole{
+
+0%{
+transform:
+translate(-50%,-50%)
+rotate(0deg)
+scale(1);
+}
+
+50%{
+transform:
+translate(-50%,-50%)
+rotate(180deg)
+scale(1.05);
+}
+
+100%{
+transform:
+translate(-50%,-50%)
+rotate(360deg)
+scale(1);
+}
+
+}
+
+/* =========================
+ADMIN
+========================= */
+
+.theme-admin{
+--bg1:#071426;
+--bg2:#0a2340;
+--accent:#3ba7ff;
+}
+
+.theme-admin #clock{
+
+text-shadow:
+0 0 20px #3ba7ff,
+0 0 40px #3ba7ff,
+0 0 70px #3ba7ff;
+
+}
+
+/* =========================
+HACKER
+========================= */
+
+.theme-hacker{
+--bg1:#000000;
+--bg2:#001100;
+--accent:#00ff66;
+}
+
+.theme-hacker #clock{
+
+text-shadow:
+0 0 12px #00ff66,
+0 0 24px #00ff66,
+0 0 50px #00ff66;
+
+font-family:monospace;
+
+}
+
+.theme-hacker::after{
+
+content:
+"01010101 ACCESS GRANTED 10101010";
+
+position:fixed;
+
+inset:0;
+
+display:flex;
+align-items:center;
+justify-content:center;
+
+color:#00ff6615;
+
+font-size:clamp(1rem,3vw,2.5rem);
+
+font-family:monospace;
+
+pointer-events:none;
+
+z-index:0;
+
+animation:
+hackerFloat 10s linear infinite;
+
+white-space:nowrap;
+
+overflow:hidden;
+
+}
+
+@keyframes hackerFloat{
+
+0%{
+transform:
+translateY(-2%);
+opacity:.15;
+}
+
+50%{
+transform:
+translateY(2%);
+opacity:.22;
+}
+
+100%{
+transform:
+translateY(-2%);
+opacity:.15;
+}
+
+}
