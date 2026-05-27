@@ -1,0 +1,408 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>School Clock</title>
+
+<style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box
+}
+
+:root{
+--accent:#7cffb2;
+--bg1:#1e293b;
+--bg2:#0f172a;
+--panel:#ffffff14;
+--border:#ffffff1f;
+--text:#fff;
+--item:#ffffff08;
+--thin:#ffffff05;
+--menu:#0f172af5
+}
+
+body.light{
+--accent:#0ea765;
+--bg1:#dfe9f3;
+--bg2:#ffffff;
+--panel:#fffffff2;
+--border:#00000012;
+--text:#111827;
+--item:#00000008;
+--thin:#00000004;
+--menu:#ffffff
+}
+
+body{
+font-family:Arial,sans-serif;
+background:
+radial-gradient(circle at top left,var(--bg1),var(--bg2) 65%);
+color:var(--text);
+overflow:hidden
+}
+
+#broadcast{
+display:none;
+position:fixed;
+top:10px;
+left:50%;
+transform:translateX(-50%);
+z-index:9999;
+padding:10px 16px;
+border-radius:16px;
+background:#1f2937ee;
+border:1px solid #ffd16644;
+max-width:min(90vw,500px);
+backdrop-filter:blur(12px)
+}
+
+#broadcastText{
+font-size:1rem;
+font-weight:700;
+color:#ffd166
+}
+
+#miniTop{
+display:none;
+position:absolute;
+top:12px;
+left:50%;
+transform:translateX(-50%);
+width:min(94vw,800px);
+gap:10px;
+z-index:10
+}
+
+.miniBox{
+flex:1;
+background:var(--panel);
+border:1px solid var(--border);
+padding:12px;
+border-radius:18px;
+backdrop-filter:blur(12px);
+text-align:center
+}
+
+.miniLabel{
+font-size:.7rem;
+opacity:.55
+}
+
+.miniValue{
+font-size:1rem;
+font-weight:800
+}
+
+#app{
+width:100vw;
+height:100vh;
+display:flex;
+align-items:center;
+justify-content:space-between;
+gap:3vw;
+padding:3vw
+}
+
+#clockWrap{
+flex:1;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+gap:18px
+}
+
+#clock{
+font-size:clamp(2rem,7vw,8rem);
+font-weight:900;
+letter-spacing:4px
+}
+
+#date{
+font-size:clamp(1rem,1.5vw,1.4rem);
+opacity:.7
+}
+
+#side{
+width:min(500px,42vw);
+min-width:320px;
+height:min(92vh,900px);
+display:flex;
+flex-direction:column;
+padding:28px;
+border-radius:28px;
+background:var(--panel);
+border:1px solid var(--border);
+backdrop-filter:blur(18px);
+overflow:hidden;
+position:relative
+}
+
+#menuBtn{
+position:absolute;
+top:18px;
+right:18px;
+width:48px;
+height:48px;
+border:none;
+border-radius:50%;
+background:#0007;
+color:white;
+font-size:1.2rem;
+cursor:pointer;
+z-index:99999
+}
+
+body.light #menuBtn{
+background:#00000015;
+color:#111
+}
+
+#menu{
+position:absolute;
+top:76px;
+right:18px;
+width:270px;
+display:none;
+flex-direction:column;
+gap:8px;
+padding:10px;
+border-radius:22px;
+background:var(--menu);
+border:1px solid var(--border);
+z-index:99999;
+box-shadow:0 10px 30px #0004
+}
+
+#menu.show{
+display:flex
+}
+
+.menuButton{
+border:none;
+padding:14px;
+border-radius:14px;
+background:var(--item);
+color:var(--text);
+cursor:pointer;
+font-weight:700;
+text-align:left
+}
+
+.menuButton:hover{
+background:var(--accent);
+color:black
+}
+
+#status,
+#title,
+#next,
+#countdown{
+text-align:center
+}
+
+#status{
+font-size:.85rem;
+opacity:.6;
+margin-bottom:10px
+}
+
+#next{
+font-size:clamp(1.1rem,2vw,1.9rem);
+font-weight:900;
+color:var(--accent);
+margin:8px 0;
+line-height:1.2
+}
+
+#countdown{
+font-size:clamp(2rem,5vw,5rem);
+font-weight:900;
+margin-bottom:14px
+}
+
+#progressWrap{
+width:100%;
+height:14px;
+border-radius:999px;
+overflow:hidden;
+background:var(--item);
+margin-bottom:18px
+}
+
+#progressBar{
+width:0%;
+height:100%;
+background:
+linear-gradient(90deg,#7cffb2,#43e97b)
+}
+
+#list{
+flex:1;
+display:flex;
+flex-direction:column;
+gap:6px;
+overflow-y:auto;
+padding-right:4px
+}
+
+.item{
+display:flex;
+justify-content:space-between;
+padding:12px 14px;
+border-radius:14px;
+background:var(--item)
+}
+
+.active{
+background:#7cffb224;
+color:var(--accent);
+font-weight:800
+}
+
+.thin{
+font-size:.82rem;
+opacity:.55
+}
+
+@media(max-width:850px){
+
+#clockWrap{
+display:none
+}
+
+#miniTop{
+display:flex
+}
+
+#app{
+justify-content:center;
+padding-top:90px;
+padding-left:10px;
+padding-right:10px
+}
+
+#side{
+width:100%;
+height:calc(100vh - 110px);
+padding:18px
+}
+
+#next{
+font-size:1.3rem
+}
+
+#countdown{
+font-size:3rem
+}
+
+}
+
+</style>
+</head>
+
+<body>
+
+<div id="broadcast">
+<div id="broadcastText"></div>
+</div>
+
+<div id="miniTop">
+
+<div class="miniBox">
+<div class="miniLabel">TIME</div>
+<div class="miniValue" id="miniClock"></div>
+</div>
+
+<div class="miniBox">
+<div class="miniLabel">NEXT CLASS</div>
+<div class="miniValue" id="miniNext"></div>
+</div>
+
+<div class="miniBox">
+<div class="miniLabel">COUNTDOWN</div>
+<div class="miniValue" id="miniCountdown"></div>
+</div>
+
+</div>
+
+<div id="app">
+
+<div id="clockWrap">
+
+<div id="clock"></div>
+
+<div id="date"></div>
+
+</div>
+
+<div id="side">
+
+<button id="menuBtn">⚙</button>
+
+<div id="menu">
+
+<button class="menuButton"
+onclick="toggleTheme()">
+Toggle Light / Dark
+</button>
+
+<button class="menuButton"
+onclick="toggle24Hour()">
+Toggle 24 Hour Time
+</button>
+
+<button class="menuButton"
+onclick="changeOffset()">
+Clock Offset
+</button>
+
+<button class="menuButton"
+onclick="openEditor()">
+Customize Schedule
+</button>
+
+<button class="menuButton"
+onclick="importSchedule()">
+Import Schedule
+</button>
+
+<button class="menuButton"
+onclick="exportSchedule()">
+Export Schedule
+</button>
+
+</div>
+
+<div id="status">
+SCHOOL CLOCK
+</div>
+
+<div id="title"></div>
+
+<div id="next"></div>
+
+<div id="countdown"></div>
+
+<div id="progressWrap">
+<div id="progressBar"></div>
+</div>
+
+<div id="list"></div>
+
+</div>
+</div>
+
+<input type="file"
+id="fileInput"
+accept=".json"
+hidden>
+
+<script src="clock-core.js"></script>
+
+</body>
+</html>
