@@ -1,0 +1,256 @@
+/* =========================
+DEFAULT
+========================= */
+
+body{
+transition:
+background .35s,
+color .35s;
+}
+
+/* =========================
+LIGHT
+========================= */
+
+body.light{
+--accent:#2563eb;
+--bg1:#f4f7fb;
+--bg2:#dbeafe;
+--panel:#ffffffdd;
+--border:#00000018;
+--text:#111827;
+--item:#0000000d;
+--menu:#ffffff;
+background:
+linear-gradient(
+135deg,
+var(--bg1),
+var(--bg2)
+);
+color:var(--text);
+}
+
+/* =========================
+SUNSET
+========================= */
+
+.theme-sunset{
+--accent:#ffb347;
+--bg1:#ff6b6b;
+--bg2:#5f27cd;
+--panel:#ffffff18;
+--border:#ffffff22;
+--text:#fff;
+--item:#ffffff10;
+--menu:#2a1635f2;
+
+background:
+linear-gradient(
+135deg,
+#ff6b6b,
+#feca57,
+#5f27cd
+);
+
+background-size:300% 300%;
+
+animation:
+sunsetMove 18s ease infinite;
+
+color:white;
+}
+
+@keyframes sunsetMove{
+
+0%{
+background-position:0% 50%;
+}
+
+50%{
+background-position:100% 50%;
+}
+
+100%{
+background-position:0% 50%;
+}
+
+}
+
+/* =========================
+MOON
+========================= */
+
+.theme-moon{
+--accent:#bcd4ff;
+--bg1:#0f172a;
+--bg2:#111827;
+--panel:#ffffff12;
+--border:#ffffff22;
+--text:#eef4ff;
+--item:#ffffff08;
+--menu:#0f172af2;
+
+background:
+linear-gradient(
+180deg,
+#0f172a,
+#111827,
+#1e293b
+);
+
+color:white;
+}
+
+/* =========================
+VOID
+========================= */
+
+.theme-void{
+--accent:#b026ff;
+--bg1:#05010a;
+--bg2:#12001f;
+--panel:#14051ecc;
+--border:#b026ff33;
+--text:#f5e9ff;
+--item:#ffffff08;
+--menu:#0c0016f2;
+
+background:
+radial-gradient(
+circle at center,
+#1a0228,
+#05010a 70%
+);
+
+color:white;
+}
+
+/* =========================
+HACKER
+========================= */
+
+.theme-hacker{
+--accent:#00ff88;
+--bg1:#000;
+--bg2:#000;
+--panel:#001a11cc;
+--border:#00ff8844;
+--text:#00ff88;
+--item:#001a11aa;
+--menu:#001108f2;
+
+background:black;
+
+color:#00ff88;
+
+position:relative;
+overflow:hidden;
+}
+
+.theme-hacker::before{
+content:"";
+position:fixed;
+left:50%;
+top:50%;
+width:700px;
+height:700px;
+transform:translate(-50%,-50%);
+border-radius:50%;
+
+background:
+radial-gradient(
+circle,
+#000 0%,
+#000 18%,
+#00ff8844 24%,
+transparent 34%
+);
+
+animation:
+blackHoleSpin 18s linear infinite;
+
+z-index:-10;
+
+pointer-events:none;
+
+opacity:.9;
+}
+
+@keyframes blackHoleSpin{
+
+from{
+transform:
+translate(-50%,-50%)
+rotate(0deg)
+}
+
+to{
+transform:
+translate(-50%,-50%)
+rotate(360deg)
+}
+
+}
+
+/* =========================
+ADMIN
+========================= */
+
+.theme-admin{
+--accent:#4db8ff;
+--bg1:#07111f;
+--bg2:#02060d;
+--panel:#0a1930cc;
+--border:#4db8ff44;
+--text:#dff4ff;
+--item:#10233faa;
+--menu:#071320f2;
+
+background:
+linear-gradient(
+135deg,
+#07111f,
+#02060d
+);
+
+color:#dff4ff;
+
+position:relative;
+overflow:hidden;
+}
+
+.theme-admin::before{
+content:"";
+
+position:fixed;
+inset:0;
+
+background:
+linear-gradient(
+90deg,
+transparent,
+#4db8ff11,
+transparent
+);
+
+background-size:200px 200px;
+
+animation:
+adminMove 8s linear infinite;
+
+pointer-events:none;
+
+z-index:-10;
+}
+
+@keyframes adminMove{
+
+from{
+transform:translateY(0)
+}
+
+to{
+transform:translateY(200px)
+}
+
+}
